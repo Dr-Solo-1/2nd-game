@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ممالك الظلال - المطور</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #0d1b2a;
+      color: #e0f7fa;
+      text-align: center;
+      padding: 10px;
+      margin: 0;
+      font-size: 18px;
+    }
+    .container {
+      max-width: 100%;
+      margin: 0 auto;
+      background: #152a3c;
+      padding: 15px;
+      border-radius: 15px;
+      border: 2px solid #2a6b8a;
+    }
+    h1 {
+      color: #ffd700;
+      font-size: 28px;
+      margin: 10px 0;
+    }
+    button {
+      background: #2a7d45;
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      margin: 8px 6px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 18px;
+      width: 90%;
+      max-width: 300px;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: #3a9d55;
+      transform: translateY(-2px);
+    }
+    button:disabled {
+      background: #555;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .combat-btns {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .combat-btns button {
+      width: 45%;
+      max-width: 140px;
+    }
+    .stats {
+      background: #0f2535;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 12px;
+      font-size: 19px;
+      line-height: 1.8;
+      border: 1px solid #1e4a63;
+    }
+    .log {
+      background: #081a28;
+      height: 260px;
+      overflow-y: auto;
+      padding: 15px;
+      border-radius: 12px;
+      margin: 15px 0;
+      text-align: right;
+      border: 2px solid #2a6b8a;
+      font-size: 19px;
+      line-height: 1.7;
+    }
+    .story {
+      background: #183545;
+      padding: 15px;
+      border-radius: 12px;
+      margin: 15px 0;
+      font-size: 20px;
+      font-style: italic;
+      color: #a8e6cf;
+    }
+    .zone-title {
+      background: #1e4558;
+      padding: 12px;
+      border-radius: 10px;
+      margin: 12px 0;
+      font-size: 22px;
+      font-weight: bold;
+      color: #88e688;
+    }
+    .choices {
+      margin: 15px 0;
+      padding: 15px;
+      background: #253a50;
+      border-radius: 12px;
+    }
+    .progress-bar {
+      background: #1a3a4a;
+      border-radius: 10px;
+      height: 20px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4CAF50, #8BC34A);
+      transition: width 0.5s ease;
+    }
+    .hp-bar {
+      background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    }
+    .xp-bar {
+      background: linear-gradient(90deg, #2196F3, #03A9F4);
+    }
+    .inventory {
+      background: #1a2e3f;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 12px;
+      border: 1px solid #2a6b8a;
+    }
+    .inventory-item {
+      display: inline-block;
+      background: #2a4a5f;
+      padding: 8px 12px;
+      margin: 5px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid #3a7a9a;
+    }
+    .inventory-item:hover {
+      background: #3a5a6f;
+    }
+    .skill-btn {
+      background: #9C27B0 !important;
+      width: 100% !important;
+      max-width: 250px !important;
+    }
+    .skill-btn:hover {
+      background: #AB47BC !important;
+    }
+    .cooldown {
+      background: #7B1FA2 !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏰 ممالك الظلال - المطور</h1>
+
+    <div id="startScreen">
+      <p>اختر بطلَك:</p>
+      <button onclick="startGame('الفارس')">الفارس ⚔️<br><small>متوازن - دفاع قوي</small></button>
+      <button onclick="startGame('الحكيم')">الحكيم 📜<br><small>صحة عالية - حكمة</small></button>
+      <button onclick="startGame('الصياد')">الصياد 🏹<br><small>هجوم سريع - دقة</small></button>
+    </div>
+
+    <div id="gameScreen" style="display:none;">
+      <div class="stats" id="statsBox">
+        البطل: <span id="heroName">—</span> | المستوى: <span id="level">1</span><br>
+        الخبرة: <span id="xp">0</span>/<span id="maxXp">100</span>
+        <div class="progress-bar">
+          <div class="progress-fill xp-bar" id="xpBar" style="width: 0%"></div>
+        </div>
+        الصحة: <span id="heroHP">100</span> / <span id="maxHP">100</span>
+        <div class="progress-bar">
+          <div class="progress-fill hp-bar" id="hpBar" style="width: 100%"></div>
+        </div>
+        الهجوم: <span id="heroAtk">15</span><br>
+        الذهب: <span id="gold">0</span> 💰<br>
+        الانتصارات: <span id="wins">0</span><br>
+        السمعة: <span id="reputation">محايد</span> 🌟
+      </div>
+
+      <!-- قسم المهارات -->
+      <div class="inventory">
+        <h3>🎯 المهارات الخاصة</h3>
+        <button id="specialSkill" class="skill-btn" onclick="useSpecialSkill()" disabled>
+          تحميل المهارة...
+        </button>
+      </div>
+
+      <!-- قسم العناصر -->
+      <div class="inventory">
+        <h3>🎒 الحقيبة</h3>
+        <div id="inventoryItems">
+          <span style="color: #888">الحقيبة فارغة</span>
+        </div>
+      </div>
+
+      <div class="zone-title" id="zoneTitle">الغابة الملعونة</div>
+
+      <div class="story" id="storyText">ابدأ مغامرتك...</div>
+
+      <div class="log" id="battleLog">مرحبًا بك في ممالك الظلال!</div>
+
+      <div style="margin: 15px 0;">
+        <button onclick="changeZone('الغابة')">🌲 الغابة</button>
+        <button onclick="changeZone('الواحة')">🌴 الواحة</button>
+        <button onclick="changeZone('الجبال')">⛰️ الجبال</button>
+      </div>
+
+      <button onclick="explore()">⚔️ استكشف</button>
+      <button onclick="upgrade('hp')">❤️ +20 صحة (20 ذهب)</button>
+      <button onclick="upgrade('atk')">💥 +5 هجوم (25 ذهب)</button>
+      <button onclick="useItem('heal')">🍖 استخدام علاج (إن وجد)</button>
+      <button onclick="resetGame()">🔄 ابدأ من جديد</button>
+
+      <div id="choicesSection" class="choices" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script>
+    // =============== الحالة ===============
+    let game = {
+      hero: null,
+      gold: 0,
+      wins: 0,
+      currentZone: "الغابة",
+      reputation: 0,
+      level: 1,
+      xp: 0,
+      maxXp: 100,
+      inventory: [],
+      skillCooldown: 0
+    };
+
+    // =============== المهارات الخاصة ===============
+    const heroSkills = {
+      'الفارس': {
+        name: 'ضربة البطل',
+        description: 'ضربة قوية تسبب ضرر مضاعف',
+        cooldown: 3,
+        effect: function(monster) {
+          const damage = game.hero.atk * 2;
+          log(`🎯 ${game.hero.name} يستخدم ضربة البطل! ضرر: ${damage}`);
+          return damage;
+        }
+      },
+      'الحكيم': {
+        name: 'درع الحكمة',
+        description: 'درع وقائي يمنع الهجوم القادم',
+        cooldown: 4,
+        effect: function() {
+          log(`🛡️ ${game.hero.name} ينشئ درع الحكمة! الهجوم القادم سيتجنبه`);
+          game.hero.shield = true;
+          return 0;
+        }
+      },
+      'الصياد': {
+        name: 'سهم القنص',
+        description: 'سهم سريع يهاجم مرتين',
+        cooldown: 2,
+        effect: function(monster) {
+          log(`🎯 ${game.hero.name} يطلق سهم القنص! هجوم مزدوج`);
+          return game.hero.atk; // سيتم تطبيقه مرتين
+        }
+      }
+    };
+
+    // =============== العناصر ===============
+    const items = {
+      'heal': { name: 'علاج 🍖', effect: 'يعيد 50 نقطة صحة', price: 15 },
+      'attack': { name: 'جرعة القوة 💪', effect: 'يزيد الهجوم 10 نقاط للمعركة الحالية', price: 20 },
+      'gold': { name: 'كيس ذهب 💰', effect: 'يعطي 25 ذهب إضافي', price: 0 }
+    };
+
+    // =============== الشخصيات ===============
+    const npcs = {
+      "الغابة": [
+        {
+          name: "العجوز الحكيم",
+          dialogue: "السلام عليك... الحقيقة أم القوة؟",
+          choices: [
+            { text: "الحقيقة", effect: () => { 
+                game.reputation += 2; 
+                addXP(25);
+                log("العجوز: 'الحكمة درعك.' +25 خبرة");
+              } 
+            },
+            { text: "القوة", effect: () => { 
+                game.hero.atk += 3; 
+                log("العجوز: 'القوة سيف ذو حدين.' +3 هجوم");
+              } 
+            }
+          ]
+        }
+      ],
+      "الواحة": [
+        {
+          name: "التاجر الغامض",
+          dialogue: "لدي سحر نادر... لكنه لا يُباع بالذهب وحده.",
+          choices: [
+            { text: "أدفع 30 ذهب", effect: () => { 
+                if (game.gold >= 30) {
+                  game.gold -= 30;
+                  game.hero.maxHp += 25;
+                  game.hero.hp += 25;
+                  addXP(20);
+                  log("حصلت على سحر الحياة! (+25 صحة، +20 خبرة)");
+                } else log("ليس لديك ذهب كافٍ!");
+              } 
+            },
+            { text: "ما هذا السر؟", effect: () => { 
+                log("التاجر: 'السمعة تفتح الأبواب...'");
+                game.reputation += 1;
+              } 
+            },
+            { text: "اشتري علاج (15 ذهب)", effect: () => {
+                if (game.gold >= 15) {
+                  game.gold -= 15;
+                  game.inventory.push('heal');
+                  log("اشتريت علاج! (+1 علاج في الحقيبة)");
+                  updateInventory();
+                } else log("ليس لديك ذهب كافٍ!");
+              }
+            }
+          ]
+        }
+      ]
+    };
+
+    // =============== الوحوش ===============
+    const zones = {
+      "الغابة": {
+        name: "الغابة الملعونة",
+        story: ["تسمع صريرًا بين الأغصان...", "وجدت أثر أقدام...", "ضباب كثيف..."],
+        monsters: [
+          { name: "ذئب الضباب", hp: 30, atk: 8, type: "common", xp: 15 },
+          { name: "شجرة الغول", hp: 50, atk: 12, type: "common", xp: 25 },
+          { name: "العنكبوت السام", hp: 70, atk: 16, type: "rare", xp: 40 }
+        ]
+      },
+      "الواحة": {
+        name: "الواحة المحرّمة",
+        story: ["نخيل عتيق...", "صوت ناي بعيد...", "رمال ذهبية..."],
+        monsters: [
+          { name: "عفريت الرمال", hp: 40, atk: 10, type: "common", xp: 20 },
+          { name: "الحية الذهبية", hp: 60, atk: 14, type: "rare", xp: 35 },
+          { name: "عملاق الواحة", hp: 90, atk: 18, type: "boss", xp: 60 }
+        ]
+      },
+      "الجبال": {
+        name: "جبال الجن",
+        story: ["صخور شاهقة...", "نور أزرق...", "همسات الرياح..."],
+        monsters: [
+          { name: "غول الجبال", hp: 55, atk: 13, type: "common", xp: 25 },
+          { name: "النسر الساحر", hp: 75, atk: 17, type: "rare", xp: 45 },
+          { name: "حارس الكهف", hp: 100, atk: 22, type: "boss", xp: 80 }
+        ]
+      }
+    };
+
+    // =============== دوال مساعدة ===============
+    function log(msg) {
+      const logBox = document.getElementById('battleLog');
+      logBox.innerHTML += msg + '<br>';
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function getReputationText() {
+      if (game.reputation >= 7) return "شجاع";
+      if (game.reputation >= 3) return "كريم";
+      if (game.reputation <= -7) return "جبان";
+      if (game.reputation <= -3) return "جشع";
+      return "محايد";
+    }
+
+    function updateUI() {
+      if (!game.hero) return;
+      
+      document.getElementById('heroName').textContent = game.hero.name;
+      document.getElementById('level').textContent = game.level;
+      document.getElementById('xp').textContent = game.xp;
+      document.getElementById('maxXp').textContent = game.maxXp;
+      document.getElementById('heroHP').textContent = game.hero.hp;
+      document.getElementById('maxHP').textContent = game.hero.maxHp;
+      document.getElementById('heroAtk').textContent = game.hero.atk;
+      document.getElementById('gold').textContent = game.gold;
+      document.getElementById('wins').textContent = game.wins;
+      document.getElementById('reputation').textContent = getReputationText();
+      
+      // تحديث أشرطة التقدم
+      document.getElementById('hpBar').style.width = `${(game.hero.hp / game.hero.maxHp) * 100}%`;
+      document.getElementById('xpBar').style.width = `${(game.xp / game.maxXp) * 100}%`;
+      
+      const zoneData = zones[game.currentZone];
+      document.getElementById('zoneTitle').textContent = zoneData.name;
+      document.getElementById('storyText').textContent = 
+        zoneData.story[Math.floor(Math.random() * zoneData.story.length)];
+
+      // تحديث حالة المهارة
+      updateSkillButton();
+    }
+
+    function addXP(amount) {
+      game.xp += amount;
+      if (game.xp >= game.maxXp) {
+        levelUp();
+      }
+      updateUI();
+    }
+
+    function levelUp() {
+      game.level++;
+      game.xp = game.xp - game.maxXp;
+      game.maxXp = Math.floor(game.maxXp * 1.5);
+      
+      game.hero.maxHp += 20;
+      game.hero.hp = game.hero.maxHp;
+      game.hero.atk += 5;
+      
+      log(`🎉 LEVEL UP! المستوى ${game.level}! +20 صحة، +5 هجوم`);
+      
+      if (game.level % 3 === 0) {
+        game.inventory.push('heal');
+        log(`🎁 مكافأة مستوى: حصلت على علاج!`);
+        updateInventory();
+      }
+    }
+
+    function updateSkillButton() {
+      const skillBtn = document.getElementById('specialSkill');
+      const skill = heroSkills[game.hero.name];
+      
+      if (game.skillCooldown > 0) {
+        skillBtn.textContent = `${skill.name} (${game.skillCooldown} جولات)`;
